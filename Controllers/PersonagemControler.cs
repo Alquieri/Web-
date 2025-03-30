@@ -1,32 +1,38 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Xablau.Controllers.Data;
+using Xablau.Models;
+
 
 namespace Xablau.Controllers
 {
-    [Route("[controller]")]
-    public class PersonagemControler : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PersonagemControler : ControllerBase
     {
-        private readonly ILogger<PersonagemControler> _logger;
+        private readonly AppDbContext _appDbContext;
 
-        public PersonagemControler(ILogger<PersonagemControler> logger)
+        public PersonagemControler(AppDbContext appDbContext)
         {
-            _logger = logger;
+            _appDbContext = appDbContext;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
+        [HttpPost]
+            public async Task<IActionResult> AddPersonagem(Personagem personagem)
+            {
+              if(personagem == null){
+                return BadRequest("Dados inválidos!");
+              }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View("Error!");
-        }
+              _appDbContext.XablauDb.Add(personagem);
+              await _appDbContext.SaveChangesAsync();
+              return StatusCode(201, personagem);
+
+
+            }
+        
+
+      
+
+
     }
 }
