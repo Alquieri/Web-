@@ -18,15 +18,15 @@ namespace Xablau.Controllers
         }
 
         [HttpPost]
-            public async Task<IActionResult> AddPersonagem(Personagem personagem)
+            public async Task<IActionResult> AddPersonagem([FromBody] Personagem personagem)
             {
-              if(personagem == null){
-                return BadRequest("Dados inválidos!");
+              if(!ModelState.IsValid){
+                return BadRequest(ModelState);
               }
 
               _appDbContext.XablauDb.Add(personagem);
               await _appDbContext.SaveChangesAsync();
-              return StatusCode(201, personagem);
+              return Created("Personagem criado co sucesso!",personagem);
 
             }
 
@@ -38,11 +38,11 @@ namespace Xablau.Controllers
 
               return Ok(personagem);
 
-            }
+            } 
 
             [HttpGet("{id}")]
 
-            public async Task<ActionResult<Personagem>> GetPersonagemById(int id)
+            public async Task<ActionResult<Personagem>>  GetPersonagemById(int id)
             {
                 var personagem = await _appDbContext.XablauDb.FindAsync(id);
 
